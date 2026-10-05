@@ -4,3 +4,5 @@ python-multipart
 pymysql
 pandas
 matplotlib
+mcp
+requests

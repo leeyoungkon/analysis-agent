@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-mcp
+  labels:
+    app: customer-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-mcp
+  template:
+    metadata:
+      labels:
+        app: customer-mcp
+    spec:
+      containers:
+        - name: customer-mcp
+          image: yklee2002/customer-mcp
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8000
+
+          env:
+            - name: CUSTOMER_DB_HOST
+              value: "mysql"
+
+            - name: CUSTOMER_DB_PORT
+              value: "3306"
+
+            - name: CUSTOMER_DB_USER
+              value: "root"
+
+            - name: CUSTOMER_DB_PASSWORD
+              value: "root1234"
+
+            - name: CUSTOMER_DB_NAME
+              value: "customerdb"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-mcp
+spec:
+  type: ClusterIP
+  selector:
+    app: customer-mcp
+  ports:
+    - port: 8000
+      targetPort: 8000

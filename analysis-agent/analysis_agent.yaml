@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analysis-agent
+  labels:
+    app: analysis-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analysis-agent
+  template:
+    metadata:
+      labels:
+        app: analysis-agent
+    spec:
+      containers:
+        - name: analysis-agent
+          image: yklee2002/analysis-agent
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8000
+
+          env:
+            - name: OLLAMA_URL
+              value: "http://ollama:11434/api/chat"
+
+            - name: OLLAMA_MODEL
+              value: "gemma3:12b"
+
+            - name: ANALYTICS_DB_HOST
+              value: "mysql"
+
+            - name: ANALYTICS_DB_PORT
+              value: "3306"
+
+            - name: ANALYTICS_DB_USER
+              value: "root"
+
+            - name: ANALYTICS_DB_PASSWORD
+              value: "root1234"
+
+            - name: ANALYTICS_DB_NAME
+              value: "analytics"
+
+            - name: MCP_SERVER_URL
+              value: "http://customer-mcp:8000/mcp"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analysis-agent
+spec:
+  type: NodePort
+  selector:
+    app: analysis-agent
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30120
